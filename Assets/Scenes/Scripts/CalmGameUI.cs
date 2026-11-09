@@ -354,8 +354,9 @@ public class CalmGameUI : MonoBehaviour
     // Shared home layout: coin bar on top, one big play button, four feature tiles, sound / how-to row.
     void BuildHomeMenu()
     {
-        CoinBar(safe, new Vector2(-195, -50));
-        IconButton(safe, "settings", "Cài đặt", new Vector2(290, -50), OpenSettings, 64, true);
+        CoinBar(safe, new Vector2(-212, -50));
+        safe.GetChild(safe.childCount - 1).localScale = Vector3.one * 1.05f;
+        IconButton(safe, "settings", "Cài đặt", new Vector2(310, -50), OpenSettings, 67, true);
         var play = Button(safe, "Chơi Ngay\nMàn " + LevelProgression.Saved, new Vector2(0, -40), new Vector2(580, 120), LevelProgression.Continue, true);
         var playText = play.GetComponentInChildren<Text>();
         playText.fontSize = 36; playText.resizeTextMaxSize = 36;
