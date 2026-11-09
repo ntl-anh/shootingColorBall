@@ -184,7 +184,7 @@ public class CalmGameUI : MonoBehaviour
         canvas.sortingOrder = 100;
         var scaler = root.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(820, 1458); // wider than the 720 layout: leaves ~50 units of margin each side
+        scaler.referenceResolution = new Vector2(765, 1360); // slightly wider than the 720 layout: ~22 units of margin each side
         scaler.matchWidthOrHeight = 0f; // match width: 720-unit canvas width on every phone, so nothing spills past the side edges
         safe = Rect("Safe area", root.transform, Vector2.zero, Vector2.zero);
         UpdateSafeArea();
@@ -201,7 +201,7 @@ public class CalmGameUI : MonoBehaviour
     // so widen the vertical FOV until the original horizontal view fits again.
     void FitGameCamera()
     {
-        const float referenceAspect = 720f / 1280f * 1.12f;
+        const float referenceAspect = 720f / 1280f * 1.06f;
         foreach (var view in UnityEngine.Camera.allCameras)
         {
             if (view.targetTexture || view.orthographic || view.aspect >= referenceAspect) continue;
@@ -300,7 +300,7 @@ public class CalmGameUI : MonoBehaviour
         backdropCanvas.sortingOrder = -50;
         var scaler = root.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(820, 1458); // wider than the 720 layout: leaves ~50 units of margin each side
+        scaler.referenceResolution = new Vector2(765, 1360); // slightly wider than the 720 layout: ~22 units of margin each side
         scaler.matchWidthOrHeight = 0f; // match width: 720-unit canvas width on every phone, so nothing spills past the side edges
         BuildBackdrop(root.transform, "bg_lab");
         var ground = GameObject.Find("Ground");
