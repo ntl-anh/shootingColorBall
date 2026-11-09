@@ -185,7 +185,7 @@ public class CalmGameUI : MonoBehaviour
         var scaler = root.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(720, 1280);
-        scaler.matchWidthOrHeight = .5f;
+        scaler.matchWidthOrHeight = 0f; // match width: 720-unit canvas width on every phone, so nothing spills past the side edges
         safe = Rect("Safe area", root.transform, Vector2.zero, Vector2.zero);
         UpdateSafeArea();
         if (LevelProgression.Current == 0) BuildHome();
@@ -193,8 +193,21 @@ public class CalmGameUI : MonoBehaviour
         foreach (var decoration in decorations) decorationPositions.Add(decoration.anchoredPosition);
         ApplyTheme();
         if (skin == null) JellyPopVisuals.ApplyScene();
+        if (LevelProgression.Current > 0) FitGameCamera();
         yield return null;
         SetCover(0, .25f);
+    }
+    // The level was framed for 9:16. On taller/narrower phones the side props (shelves, cannons) get cut off,
+    // so widen the vertical FOV until the original horizontal view fits again.
+    void FitGameCamera()
+    {
+        const float referenceAspect = 720f / 1280f;
+        foreach (var view in UnityEngine.Camera.allCameras)
+        {
+            if (view.targetTexture || view.orthographic || view.aspect >= referenceAspect) continue;
+            float halfHorizontal = Mathf.Tan(view.fieldOfView * Mathf.Deg2Rad * .5f) * referenceAspect;
+            view.fieldOfView = Mathf.Min(100f, 2f * Mathf.Atan(halfHorizontal / view.aspect) * Mathf.Rad2Deg);
+        }
     }
     void UpdateSafeArea()
     {
@@ -288,7 +301,7 @@ public class CalmGameUI : MonoBehaviour
         var scaler = root.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(720, 1280);
-        scaler.matchWidthOrHeight = .5f;
+        scaler.matchWidthOrHeight = 0f; // match width: 720-unit canvas width on every phone, so nothing spills past the side edges
         BuildBackdrop(root.transform, "bg_lab");
         var ground = GameObject.Find("Ground");
         if (ground && ground.TryGetComponent<Renderer>(out var floor)) floor.enabled = false;
@@ -299,19 +312,19 @@ public class CalmGameUI : MonoBehaviour
         var logoArt = Lab ? LabArt.Get("logo") : null;
         if (logoArt)
         {
-            var logo = Rect("Logo", safe, new Vector2(-55, 335), new Vector2(540, 540f * logoArt.rect.height / logoArt.rect.width)).gameObject.AddComponent<Image>();
+            var logo = Rect("Logo", safe, new Vector2(-85, 335), new Vector2(500, 500f * logoArt.rect.height / logoArt.rect.width)).gameObject.AddComponent<Image>();
             logo.sprite = logoArt; logo.preserveAspect = true; logo.raycastTarget = false;
             var mascot = LabArt.Get("icon_mascot");
             if (mascot)
             {
-                var cat = Rect("Mascot", safe, new Vector2(250, 360), new Vector2(210, 210)).gameObject.AddComponent<Image>();
+                var cat = Rect("Mascot", safe, new Vector2(262, 372), new Vector2(160, 160)).gameObject.AddComponent<Image>();
                 cat.sprite = mascot; cat.preserveAspect = true; cat.raycastTarget = false;
                 decorations.Add(cat.rectTransform);
             }
             var flask = LabArt.Get("icon_flask");
             if (flask)
             {
-                var bottle = Rect("Flask", safe, new Vector2(-290, 262), new Vector2(96, 96)).gameObject.AddComponent<Image>();
+                var bottle = Rect("Flask", safe, new Vector2(-300, 262), new Vector2(84, 84)).gameObject.AddComponent<Image>();
                 bottle.sprite = flask; bottle.preserveAspect = true; bottle.raycastTarget = false;
             }
         }
