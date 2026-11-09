@@ -260,6 +260,14 @@ public class CalmGameUI : MonoBehaviour
             picture.texture = scene; picture.raycastTarget = false;
             var fit = picture.gameObject.AddComponent<AspectRatioFitter>();
             fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent; fit.aspectRatio = (float)scene.width / scene.height;
+            if (labBackground == "bg_lab")
+            {
+                // Level backdrop: mute the shelves and bottles so the playable blocks and cannons stand out from the scenery.
+                var dim = Rect("Dim", back, Vector2.zero, Vector2.zero);
+                Stretch(dim);
+                var dimImage = dim.gameObject.AddComponent<Image>();
+                dimImage.color = new Color(.06f, .04f, .2f, .6f); dimImage.raycastTarget = false;
+            }
             return;
         }
         var rng = new System.Random(11);
@@ -354,9 +362,9 @@ public class CalmGameUI : MonoBehaviour
     // Shared home layout: coin bar on top, one big play button, four feature tiles, sound / how-to row.
     void BuildHomeMenu()
     {
-        CoinBar(safe, new Vector2(-212, -50));
-        safe.GetChild(safe.childCount - 1).localScale = Vector3.one * 1.05f;
-        IconButton(safe, "settings", "Cài đặt", new Vector2(310, -50), OpenSettings, 67, true);
+        CoinBar(safe, new Vector2(-222, -64));
+        safe.GetChild(safe.childCount - 1).localScale = Vector3.one * 1.4f;
+        IconButton(safe, "settings", "Cài đặt", new Vector2(325, -64), OpenSettings, 90, true);
         var play = Button(safe, "Chơi Ngay\nMàn " + LevelProgression.Saved, new Vector2(0, -40), new Vector2(580, 120), LevelProgression.Continue, true);
         var playText = play.GetComponentInChildren<Text>();
         playText.fontSize = 36; playText.resizeTextMaxSize = 36;
@@ -459,17 +467,18 @@ public class CalmGameUI : MonoBehaviour
     {
         if (!FindFirstObjectByType<CannonInput>()) new GameObject("Cannon input").AddComponent<CannonInput>();
         // Floating HUD like the reference: no header / footer slab, only pills and buttons over the backdrop.
-        var header = Panel(safe, new Vector2(0, -90), new Vector2(660, 152), () => Color.clear, true, false);
+        var header = Panel(safe, new Vector2(0, -102), new Vector2(740, 170), () => Color.clear, true, false);
         header.rectTransform.anchorMin = header.rectTransform.anchorMax = new Vector2(.5f, 1);
         header.raycastTarget = false;
-        IconButton(header.transform, "home", "Trang chủ", new Vector2(-299, 27), () => Load("MainMenu"), 60);
-        Pill(header.transform, "Màn " + LevelProgression.Current.ToString("00"), new Vector2(-213, 27), new Vector2(100, 50), 22);
-        timerText = Pill(header.transform, "", new Vector2(-60, 27), new Vector2(150, 50), 19);
-        CoinBar(header.transform, new Vector2(165, 27), false);
-        IconButton(header.transform, "settings", "Cài đặt", new Vector2(299, 27), OpenSettings, 60);
-        progressText = Label(header.transform, "", new Vector2(0, -29), new Vector2(610, 40), 18, FontStyle.Normal, true);
-        var track = Panel(header.transform, new Vector2(0, -59), new Vector2(600, 6), () => skin.Dark ? new Color(1, 1, 1, .18f) : Color.Lerp(Surface, Ink, .18f));
-        progressFill = Panel(track.transform, Vector2.zero, new Vector2(600, 6), () => skin.confirm);
+        IconButton(header.transform, "home", "Trang chủ", new Vector2(-314, 34), () => Load("MainMenu"), 84);
+        Pill(header.transform, "Màn " + LevelProgression.Current.ToString("00"), new Vector2(-205, 34), new Vector2(115, 58), 25);
+        timerText = Pill(header.transform, "", new Vector2(-62, 34), new Vector2(150, 58), 22);
+        CoinBar(header.transform, new Vector2(143, 34), false);
+        header.transform.GetChild(header.transform.childCount - 1).localScale = Vector3.one * 1.25f;
+        IconButton(header.transform, "settings", "Cài đặt", new Vector2(314, 34), OpenSettings, 84);
+        progressText = Label(header.transform, "", new Vector2(0, -42), new Vector2(700, 40), 20, FontStyle.Normal, true);
+        var track = Panel(header.transform, new Vector2(0, -70), new Vector2(680, 7), () => skin.Dark ? new Color(1, 1, 1, .18f) : Color.Lerp(Surface, Ink, .18f));
+        progressFill = Panel(track.transform, Vector2.zero, new Vector2(680, 7), () => skin.confirm);
         progressFill.type = Image.Type.Filled; progressFill.fillMethod = Image.FillMethod.Horizontal; progressFill.fillAmount = 0;
         // Keep the original preview camera and render texture: the reference stays exact.
         var previewObject = GameObject.Find("Main CameraPrivew");
@@ -477,7 +486,7 @@ public class CalmGameUI : MonoBehaviour
         if (preview && preview.targetTexture)
         {
             HidePreviewRig(previewObject);
-            var card = Panel(safe, new Vector2(0, -295), new Vector2(250, 230), () => Surface, true, true, "panel_light");
+            var card = Panel(safe, new Vector2(0, -318), new Vector2(250, 230), () => Surface, true, true, "panel_light");
             card.rectTransform.anchorMin = card.rectTransform.anchorMax = new Vector2(.5f, 1);
             previewCard = card.rectTransform;
             Pill(card.transform, "Mẫu cần phối", new Vector2(0, 108), new Vector2(180, 36), 16);
@@ -486,13 +495,14 @@ public class CalmGameUI : MonoBehaviour
             float aspect = (float)preview.targetTexture.width / preview.targetTexture.height;
             image.rectTransform.sizeDelta = aspect >= 190f / 156 ? new Vector2(190, 190 / aspect) : new Vector2(156 * aspect, 156);
         }
-        var footer = Panel(safe, new Vector2(0, 125), new Vector2(660, 114), () => Color.clear, true, false);
+        // Raised well above the bottom so the ad banner never covers the buttons.
+        var footer = Panel(safe, new Vector2(0, 240), new Vector2(740, 150), () => Color.clear, true, false);
         footer.rectTransform.anchorMin = footer.rectTransform.anchorMax = new Vector2(.5f, 0);
         footer.raycastTarget = false;
-        IconButton(footer.transform, "restart", "Chơi lại", new Vector2(-280, 0), () => { if (GameManager.instance) GameManager.instance.ResetLevel(); }, 76);
-        var undo = Button(footer.transform, "Hoàn tác", Vector2.zero, new Vector2(380, 80), () => { if (GameManager.instance) GameManager.instance.UndoLastAction(); }, false, true, true);
+        IconButton(footer.transform, "restart", "Chơi lại", new Vector2(-303, 0), () => { if (GameManager.instance) GameManager.instance.ResetLevel(); }, 106);
+        var undo = Button(footer.transform, "Hoàn tác", Vector2.zero, new Vector2(456, 100), () => { if (GameManager.instance) GameManager.instance.UndoLastAction(); }, false, true, true);
         undoText = undo.GetComponentInChildren<Text>();
-        IconButton(footer.transform, "info", "Cách chơi", new Vector2(280, 0), ShowHelp, 76);
+        IconButton(footer.transform, "info", "Cách chơi", new Vector2(303, 0), ShowHelp, 106);
         comboText = Label(safe, "", new Vector2(0, -150), new Vector2(640, 70), 36, FontStyle.Bold, true);
     }
     // Rounded purple pill with a light label, used for the level, timer and card captions.
