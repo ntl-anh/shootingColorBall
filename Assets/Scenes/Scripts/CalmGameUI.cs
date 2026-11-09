@@ -260,14 +260,6 @@ public class CalmGameUI : MonoBehaviour
             picture.texture = scene; picture.raycastTarget = false;
             var fit = picture.gameObject.AddComponent<AspectRatioFitter>();
             fit.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent; fit.aspectRatio = (float)scene.width / scene.height;
-            if (labBackground == "bg_lab")
-            {
-                // Level backdrop: mute the shelves and bottles so the playable blocks and cannons stand out from the scenery.
-                var dim = Rect("Dim", back, Vector2.zero, Vector2.zero);
-                Stretch(dim);
-                var dimImage = dim.gameObject.AddComponent<Image>();
-                dimImage.color = new Color(.06f, .04f, .2f, .6f); dimImage.raycastTarget = false;
-            }
             return;
         }
         var rng = new System.Random(11);
@@ -499,10 +491,10 @@ public class CalmGameUI : MonoBehaviour
         var footer = Panel(safe, new Vector2(0, 240), new Vector2(740, 150), () => Color.clear, true, false);
         footer.rectTransform.anchorMin = footer.rectTransform.anchorMax = new Vector2(.5f, 0);
         footer.raycastTarget = false;
-        IconButton(footer.transform, "restart", "Chơi lại", new Vector2(-303, 0), () => { if (GameManager.instance) GameManager.instance.ResetLevel(); }, 106);
-        var undo = Button(footer.transform, "Hoàn tác", Vector2.zero, new Vector2(456, 100), () => { if (GameManager.instance) GameManager.instance.UndoLastAction(); }, false, true, true);
+        IconButton(footer.transform, "restart", "Chơi lại", new Vector2(-313, 0), () => { if (GameManager.instance) GameManager.instance.ResetLevel(); }, 85);
+        var undo = Button(footer.transform, "Hoàn tác", Vector2.zero, new Vector2(365, 80), () => { if (GameManager.instance) GameManager.instance.UndoLastAction(); }, false, true, true);
         undoText = undo.GetComponentInChildren<Text>();
-        IconButton(footer.transform, "info", "Cách chơi", new Vector2(303, 0), ShowHelp, 106);
+        IconButton(footer.transform, "info", "Cách chơi", new Vector2(313, 0), ShowHelp, 85);
         comboText = Label(safe, "", new Vector2(0, -150), new Vector2(640, 70), 36, FontStyle.Bold, true);
     }
     // Rounded purple pill with a light label, used for the level, timer and card captions.
