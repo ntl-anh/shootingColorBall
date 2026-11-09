@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 500" width="1024" height="500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a35b5"/><stop offset="1" stop-color="#150f45"/></linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#b9a8ff" stop-opacity=".45"/><stop offset="1" stop-color="#b9a8ff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="shine" cx="30%" cy="25%" r="65%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="barrel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e0562b"/><stop offset=".5" stop-color="#ff8a4d"/><stop offset="1" stop-color="#c2421c"/></linearGradient>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#0a0626" flood-opacity=".5"/></filter>
+    <pattern id="grid" width="62" height="62" patternUnits="userSpaceOnUse"><path d="M62 0H0V62" fill="none" stroke="#c8b8ff" stroke-opacity=".10" stroke-width="2"/></pattern>
+  </defs>
+  <rect width="1024" height="500" fill="url(#bg)"/>
+  <rect width="1024" height="500" fill="url(#grid)"/>
+  <circle cx="800" cy="250" r="330" fill="url(#glow)"/>
+  <g fill="#fff" opacity=".75"><circle cx="40" cy="40" r="3"/><circle cx="520" cy="30" r="4"/><circle cx="980" cy="60" r="3"/><circle cx="600" cy="470" r="3"/><circle cx="30" cy="450" r="4"/><circle cx="980" cy="440" r="3"/></g>
+
+  <!-- left: logo + tagline -->
+  <image xlink:href="src/logo.png" x="36" y="62" width="560" height="233"/>
+  <image xlink:href="src/icon_flask.png" x="48" y="372" width="86" height="86"/>
+  <g font-family="Segoe UI, Arial, sans-serif" font-weight="700">
+    <text x="300" y="348" font-size="38" fill="#fff" text-anchor="middle">Ghép màu thông minh</text>
+  </g>
+  <g>
+    <circle cx="190" cy="408" r="17" fill="#ff4f9b"/><circle cx="250" cy="408" r="17" fill="#ffc93c"/>
+    <circle cx="310" cy="408" r="17" fill="#3be08a"/><circle cx="370" cy="408" r="17" fill="#2bd9f2"/>
+  </g>
+
+  <!-- right: blocks, shot and cannon -->
+  <g filter="url(#sh)">
+    <rect x="652" y="64" width="94" height="94" rx="20" fill="#ff5f78"/>
+    <rect x="762" y="64" width="94" height="94" rx="20" fill="#ffc93c"/>
+    <rect x="872" y="64" width="94" height="94" rx="20" fill="#3be08a"/>
+    <rect x="762" y="172" width="94" height="94" rx="20" fill="#e8e3ff"/>
+  </g>
+  <g fill="#fff" opacity=".32"><rect x="660" y="72" width="78" height="36" rx="14"/><rect x="770" y="72" width="78" height="36" rx="14"/><rect x="880" y="72" width="78" height="36" rx="14"/></g>
+  <!-- hit sparks on the target block -->
+  <g stroke="#fff" stroke-width="7" stroke-linecap="round"><line x1="745" y1="160" x2="732" y2="148"/><line x1="873" y1="160" x2="886" y2="148"/></g>
+  <g stroke="#fff" stroke-opacity=".85" stroke-linecap="round" stroke-width="8" stroke-dasharray="1 16"><line x1="809" y1="304" x2="809" y2="282"/></g>
+  <circle cx="809" cy="338" r="26" fill="#7a5cff" filter="url(#sh)"/><circle cx="809" cy="338" r="26" fill="url(#shine)"/>
+  <g filter="url(#sh)">
+    <rect x="781" y="372" width="56" height="62" rx="14" fill="url(#barrel)"/>
+    <rect x="773" y="366" width="72" height="20" rx="10" fill="#ff9a62"/>
+    <path d="M730 500 Q730 440 809 440 Q888 440 888 500Z" fill="#2d2670" stroke="#e8e3ff" stroke-width="6"/>
+  </g>
+  <image xlink:href="src/icon_mascot.png" x="880" y="300" width="130" height="130"/>
+</svg>

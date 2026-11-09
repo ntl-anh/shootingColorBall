@@ -41,13 +41,14 @@ public class CalmGameUI : MonoBehaviour
         public Color confirm = new Color(.22f, .84f, .42f), onConfirm = new Color(.04f, .23f, .11f);
         public float borderThickness = 3.5f;
         public bool bevel;
+        public bool grid; // techy styles draw a grid on the level backdrop; soft styles keep a plain gradient
         public bool Dark => bg.grayscale < .4f;
     }
     static readonly Skin[] Skins =
     {
-        new Skin { bg = Hex("1B1352"), surface = Hex("C5B6F7"), ink = Hex("2B1A66"), onBg = Hex("F3EDFF"), primary = Hex("FFC62E"), onPrimary = Hex("3A2100"),
+        new Skin { grid = true, bg = Hex("1B1352"), surface = Hex("C5B6F7"), ink = Hex("2B1A66"), onBg = Hex("F3EDFF"), primary = Hex("FFC62E"), onPrimary = Hex("3A2100"),
             secondary = Hex("8A5BF0"), onSecondary = Color.white, border = Hex("5A3EC8"), gold = Hex("FFC83D"), borderThickness = 6 },
-        new Skin { bg = Hex("081224"), surface = Hex("11284A"), ink = Hex("EAF6FF"), onBg = Hex("EAF6FF"), primary = Hex("2BD9F2"), onPrimary = Hex("06101F"),
+        new Skin { grid = true, bg = Hex("081224"), surface = Hex("11284A"), ink = Hex("EAF6FF"), onBg = Hex("EAF6FF"), primary = Hex("2BD9F2"), onPrimary = Hex("06101F"),
             secondary = Hex("0E1F3B"), onSecondary = Hex("EAF6FF"), border = Hex("2BD9F2"), gold = Hex("FFC93C") },
         new Skin { bg = Hex("FFD7EB"), surface = Hex("FFF4E6"), ink = Hex("5E2D5C"), onBg = Hex("6B2F63"), primary = Hex("FF5FA8"), onPrimary = Color.white,
             secondary = Hex("3FA9F5"), onSecondary = Color.white, border = Hex("FF8CC6"), gold = Hex("FFC400"), borderThickness = 6 },
@@ -55,7 +56,7 @@ public class CalmGameUI : MonoBehaviour
             secondary = Hex("1B2F8A"), onSecondary = Hex("E8F3FF"), border = Hex("63D2FF"), gold = Hex("9BE7FF"), bevel = true },
         new Skin { bg = Hex("BFE6FF"), surface = Hex("FFF2DD"), ink = Hex("6B4423"), onBg = Hex("4B3220"), primary = Hex("FF8A2B"), onPrimary = Color.white,
             secondary = Hex("6CCB5F"), onSecondary = Hex("20501C"), border = Hex("F0A248"), gold = Hex("FFB300"), borderThickness = 6 },
-        new Skin { bg = Hex("0B0F1E"), surface = Hex("1B2440"), ink = Hex("EDF1FF"), onBg = Hex("EDF1FF"), primary = Hex("6C7BFF"), onPrimary = Color.white,
+        new Skin { grid = true, bg = Hex("0B0F1E"), surface = Hex("1B2440"), ink = Hex("EDF1FF"), onBg = Hex("EDF1FF"), primary = Hex("6C7BFF"), onPrimary = Color.white,
             secondary = Hex("2A3558"), onSecondary = Hex("DDE5FF"), border = Hex("9AA6E8"), gold = Hex("FFD24A"), bevel = true, borderThickness = 4 },
         new Skin { bg = Hex("20502D"), surface = Hex("F4E6C6"), ink = Hex("4A2E14"), onBg = Hex("F4E6C6"), primary = Hex("43A047"), onPrimary = Color.white,
             secondary = Hex("9A6531"), onSecondary = Hex("FFF3DC"), border = Hex("7B4A22"), gold = Hex("FFC93C"), borderThickness = 7 },
@@ -291,11 +292,16 @@ public class CalmGameUI : MonoBehaviour
     // that stands out from the background is something the player can actually play with.
     void BuildLevelBackdrop(RectTransform back, RawImage gradient)
     {
-        gradient.texture = UiIcons.Gradient(Hex("3B2B9E"), Hex("140D46"));
+        // Follow the style picked in the shop: gradient and grid are derived from the active skin's palette.
+        gradient.texture = skin.Dark
+            ? UiIcons.Gradient(Color.Lerp(skin.bg, skin.secondary, .55f), Color.Lerp(skin.bg, Color.black, .4f))
+            : UiIcons.Gradient(Color.Lerp(skin.bg, Color.white, .55f), Color.Lerp(skin.bg, skin.primary, .3f));
+        var gridColor = skin.Dark ? new Color(1f, 1f, 1f, .1f) : new Color(skin.secondary.r, skin.secondary.g, skin.secondary.b, .16f);
+        if (!skin.grid) return;
         const int n = 64;
         var tile = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Bilinear };
         for (int y = 0; y < n; y++) for (int x = 0; x < n; x++)
-            tile.SetPixel(x, y, (x < 2 || y < 2) ? new Color(.75f, .65f, 1f, .13f) : Color.clear);
+            tile.SetPixel(x, y, (x < 2 || y < 2) ? gridColor : Color.clear);
         tile.Apply();
         var grid = Rect("Grid", back, Vector2.zero, Vector2.zero);
         Stretch(grid);
