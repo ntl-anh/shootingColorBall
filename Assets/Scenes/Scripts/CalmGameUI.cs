@@ -193,7 +193,7 @@ public class CalmGameUI : MonoBehaviour
         foreach (var decoration in decorations) decorationPositions.Add(decoration.anchoredPosition);
         ApplyTheme();
         if (skin == null) JellyPopVisuals.ApplyScene();
-        if (LevelProgression.Current > 0) FitGameCamera();
+        if (LevelProgression.Current > 0) { FitGameCamera(); BlobShadows.Create(); }
         yield return null;
         SetCover(0, .25f);
     }
