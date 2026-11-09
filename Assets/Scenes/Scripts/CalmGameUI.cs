@@ -304,7 +304,7 @@ public class CalmGameUI : MonoBehaviour
         scaler.matchWidthOrHeight = 0f; // match width: 720-unit canvas width on every phone, so nothing spills past the side edges
         BuildBackdrop(root.transform, "bg_lab");
         var ground = GameObject.Find("Ground");
-        if (ground && ground.TryGetComponent<Renderer>(out var floor)) floor.enabled = false;
+        if (ground && ground.TryGetComponent<Renderer>(out var floor)) JellyPopVisuals.MakeShadowCatcher(floor);
     }
     void BuildHomeSkin()
     {

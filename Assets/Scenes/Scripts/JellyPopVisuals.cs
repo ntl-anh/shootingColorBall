@@ -15,6 +15,15 @@ public class JellyPopVisuals : MonoBehaviour
     Material backdropMaterial;
     float lastAspect = -1;
 
+    // Hides the opaque floor but keeps it as a shadow receiver, so blocks and cannons still cast shadows on the backdrop.
+    public static void MakeShadowCatcher(Renderer floor)
+    {
+        var shader = Resources.Load<Shader>("JellyPop/ShadowCatcher");
+        if (!shader) { floor.enabled = false; return; }
+        floor.sharedMaterial = new Material(shader);
+        floor.receiveShadows = true;
+        floor.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+    }
     public static void ApplyScene()
     {
         var host = new GameObject("Jelly Pop scenery");
@@ -47,7 +56,7 @@ public class JellyPopVisuals : MonoBehaviour
             else { camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(0, 0, 0, 0); }
         }
         var ground = GameObject.Find("Ground");
-        if (ground && ground.TryGetComponent<Renderer>(out var floor)) floor.enabled = false;
+        if (ground && ground.TryGetComponent<Renderer>(out var floor)) MakeShadowCatcher(floor);
         if (view && LevelProgression.Current > 0) BuildBackdrop();
         GamePreferences.Changed += Refresh;
         UnityEngine.Camera.onPreCull += BeforeCamera;
