@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 89c5a0450a8ba1146bff599c9dca7116
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

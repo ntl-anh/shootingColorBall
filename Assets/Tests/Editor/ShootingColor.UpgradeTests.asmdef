@@ -1,0 +1,7 @@
+{
+    "name": "ShootingColor.UpgradeTests",
+    "references": [],
+    "includePlatforms": ["Editor"],
+    "optionalUnityReferences": ["TestAssemblies"],
+    "autoReferenced": false
+}
