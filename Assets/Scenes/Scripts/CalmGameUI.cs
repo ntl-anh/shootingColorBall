@@ -971,6 +971,8 @@ public class CalmGameUI : MonoBehaviour
         label.font = font; label.text = Loc.T(content); label.fontSize = fontSize;
         label.fontStyle = style; label.alignment = TextAnchor.MiddleCenter;
         label.supportRichText = false; label.raycastTarget = false;
+        // The OS font reserves extra room above the glyphs (diacritic space), so centred text sits low; lift it via the pivot.
+        label.rectTransform.pivot = new Vector2(.5f, .5f - Mathf.Min(.3f, fontSize * .09f / Mathf.Max(size.y, 1f)));
         Func<Color> ink = () => onBackground ? OnBg : Ink;
         label.color = ink();
         recolor.Add(() => { if (label) label.color = ink(); });
