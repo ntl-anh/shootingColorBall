@@ -14,6 +14,9 @@ public static class GamePreferences
     public static bool Haptics => PlayerPrefs.GetInt("Haptics", 1) == 1;
     public static float Strength => Mathf.Clamp01(PlayerPrefs.GetFloat("HapticStrength", .45f));
     public static bool Effects => PlayerPrefs.GetInt("Effects", 1) == 1;
+    // 0 = Vietnamese, 1 = English (see Loc). Defaults to the device language on first launch.
+    public static int Language => Mathf.Clamp(PlayerPrefs.GetInt("Language", Loc.DefaultLanguage()), 0, Loc.LanguageNames.Length - 1);
+    public static void SetLanguage(int value) { PlayerPrefs.SetInt("Language", Mathf.Clamp(value, 0, Loc.LanguageNames.Length - 1)); Save(false); }
     public static bool Sound => PlayerPrefs.GetInt("SoundOn", 1) == 1;
     public static void SetTheme(int value) { PlayerPrefs.SetInt("Theme", Mathf.Clamp(value, 0, JellyPopAssets.ThemeCount - 1)); Save(); }
     public static void SetHaptics(bool value)

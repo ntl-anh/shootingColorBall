@@ -238,10 +238,10 @@ public class CalmGameUI : MonoBehaviour
             int matches = 0;
             for (int i = 0; i < Mathf.Min(count, game._pattern.Count); i++)
                 if (game._cubes[i].name == game._pattern[i].name) matches++;
-            progressText.text = matches + " / " + count + " ô đúng màu   ·   Lượt " + game.Round + "/" + LevelProgression.Rounds;
+            progressText.text = Loc.F("{0} / {1} ô đúng màu   ·   Lượt {2}/{3}", matches, count, game.Round, LevelProgression.Rounds);
             progressFill.fillAmount = Mathf.Lerp(progressFill.fillAmount, count > 0 ? (float)matches / count : 0, Time.unscaledDeltaTime * 8);
-            undoText.text = "Hoàn tác · " + game.MaxUndoCount;
-            if (timerText) timerText.text = game.Timed ? Mathf.CeilToInt(game.TimeRemaining) + " giây" : "Thư giãn";
+            undoText.text = Loc.F("Hoàn tác · {0}", game.MaxUndoCount);
+            if (timerText) timerText.text = game.Timed ? Loc.F("{0} giây", Mathf.CeilToInt(game.TimeRemaining)) : Loc.T("Thư giãn");
         }
         if (!finished && !stuckOpen && Input.GetKeyDown(KeyCode.Escape)) { if (modal) CloseModal(); else OpenSettings(); }
     }
@@ -372,7 +372,7 @@ public class CalmGameUI : MonoBehaviour
             decorations.Add(dot.rectTransform);
         }
         BuildHomeMenu();
-        Label(safe, "100 màn chơi · " + StyleNames[activeStyle] + " · " + StyleTaglines[activeStyle], new Vector2(0, -555), new Vector2(640, 40), 19, FontStyle.Normal, true);
+        Label(safe, Loc.F("100 màn chơi · {0} · {1}", Loc.T(StyleNames[activeStyle]), Loc.T(StyleTaglines[activeStyle])), new Vector2(0, -555), new Vector2(640, 40), 19, FontStyle.Normal, true);
     }
     // Shared home layout: coin bar on top, one big play button, four feature tiles, sound / how-to row.
     void BuildHomeMenu()
@@ -380,7 +380,7 @@ public class CalmGameUI : MonoBehaviour
         CoinBar(safe, new Vector2(-222, -64));
         safe.GetChild(safe.childCount - 1).localScale = Vector3.one * 1.4f;
         IconButton(safe, "settings", "Cài đặt", new Vector2(325, -64), OpenSettings, 90, true);
-        var play = Button(safe, "Chơi Ngay\nMàn " + LevelProgression.Saved, new Vector2(0, -40), new Vector2(580, 120), LevelProgression.Continue, true);
+        var play = Button(safe, Loc.F("Chơi Ngay\nMàn {0}", LevelProgression.Saved), new Vector2(0, -40), new Vector2(580, 120), LevelProgression.Continue, true);
         var playText = play.GetComponentInChildren<Text>();
         playText.fontSize = 36; playText.resizeTextMaxSize = 36;
         playText.rectTransform.anchoredPosition = new Vector2(40, Lab ? 6 : 0);
@@ -419,8 +419,8 @@ public class CalmGameUI : MonoBehaviour
                 dot.raycastTarget = false;
             }
         }
-        Label(safe, "Sao đã đạt: " + GameEconomy.TotalStars() + " / " + LevelProgression.TotalCount * 3, new Vector2(0, -275), new Vector2(560, 40), 20, FontStyle.Bold, true);
-        Button(safe, "Âm thanh: " + (GamePreferences.Sound ? "Bật" : "Tắt"), new Vector2(-157, -350), new Vector2(290, 70), () => { GamePreferences.SetSound(!GamePreferences.Sound); Rebuild(); });
+        Label(safe, Loc.F("Sao đã đạt: {0} / {1}", GameEconomy.TotalStars(), LevelProgression.TotalCount * 3), new Vector2(0, -275), new Vector2(560, 40), 20, FontStyle.Bold, true);
+        Button(safe, Loc.F("Âm thanh: {0}", Loc.T(GamePreferences.Sound ? "Bật" : "Tắt")), new Vector2(-157, -350), new Vector2(290, 70), () => { GamePreferences.SetSound(!GamePreferences.Sound); Rebuild(); });
         Button(safe, "Cách chơi", new Vector2(157, -350), new Vector2(290, 70), ShowHelp);
     }
     void Rebuild() { Load(SceneManager.GetActiveScene().name); }
@@ -487,7 +487,7 @@ public class CalmGameUI : MonoBehaviour
         header.rectTransform.anchorMin = header.rectTransform.anchorMax = new Vector2(.5f, 1);
         header.raycastTarget = false;
         IconButton(header.transform, "home", "Trang chủ", new Vector2(-314, 34), () => Load("MainMenu"), 84);
-        Pill(header.transform, "Màn " + LevelProgression.Current.ToString("00"), new Vector2(-205, 34), new Vector2(115, 58), 25);
+        Pill(header.transform, Loc.F("Màn {0}", LevelProgression.Current.ToString("00")), new Vector2(-205, 34), new Vector2(115, 58), 25);
         timerText = Pill(header.transform, "", new Vector2(-62, 34), new Vector2(150, 58), 22);
         CoinBar(header.transform, new Vector2(143, 34), false);
         header.transform.GetChild(header.transform.childCount - 1).localScale = Vector3.one * 1.25f;
@@ -562,14 +562,14 @@ public class CalmGameUI : MonoBehaviour
     public void ShowMessage(string text)
     {
         if (!comboText) return;
-        comboText.text = text;
+        comboText.text = Loc.T(text);
         comboText.fontSize = 28;
         comboUntil = Time.unscaledTime + 2.5f;
     }
     public void ShowRound(int round)
     {
         if (!comboText) return;
-        comboText.text = "Lượt " + round + " · Đổi sắc màu!";
+        comboText.text = Loc.F("Lượt {0} · Đổi sắc màu!", round);
         comboText.fontSize = 30;
         comboUntil = Time.unscaledTime + 2.5f;
     }
@@ -614,7 +614,7 @@ public class CalmGameUI : MonoBehaviour
                 if (!lit) star.color = new Color(.55f, .5f, .62f, .55f);
             }
         }
-        Label(card, "MÀN " + LevelProgression.Current + "   ·   +" + coins + " xu", new Vector2(0, -15), new Vector2(560, 60), 28, FontStyle.Bold);
+        Label(card, Loc.F("MÀN {0}   ·   +{1} xu", LevelProgression.Current, coins), new Vector2(0, -15), new Vector2(560, 60), 28, FontStyle.Bold);
         Button(card, LevelProgression.Current == 100 ? "Trọn vẹn 100 màn · Về nhà" : "Màn tiếp theo  →", new Vector2(0, -130), new Vector2(530, 88), LevelProgression.Next, true);
         Button(card, "Về trang chủ", new Vector2(0, -240), new Vector2(530, 74), () => Load("MainMenu"));
     }
@@ -628,8 +628,8 @@ public class CalmGameUI : MonoBehaviour
         const int perPage = 4;
         int pageCount = Mathf.CeilToInt((float)ThemeNames.Length / perPage);
         page = Mathf.Clamp(page, 0, pageCount - 1);
-        var card = Modal("Không gian của bạn", "Chỉnh một chút, chơi thật thoải mái.", 1130);
-        CloseButton(card, "Đóng cài đặt", new Vector2(270, 520));
+        var card = Modal("Không gian của bạn", "Chỉnh một chút, chơi thật thoải mái.", 1240);
+        CloseButton(card, "Đóng cài đặt", new Vector2(270, 575));
         Action rebuild = () => { CloseModal(); OpenSettingsPage(page); };
         ToggleRow(card, "Âm thanh", new Vector2(0, 355), 68, GamePreferences.Sound, on => GamePreferences.SetSound(on), rebuild);
         var vibrationRow = Panel(card, new Vector2(0, 265), new Vector2(550, 68), () => Color.Lerp(Surface, Accent, .09f), true, false, "bar_light");
@@ -643,7 +643,7 @@ public class CalmGameUI : MonoBehaviour
         switchTrack.raycastTarget = false;
         var switchKnob = Panel(switchTrack.transform, Vector2.zero, new Vector2(32, 32), () => Color.white);
         switchKnob.raycastTarget = false;
-        var value = Label(card, "Mức rung · " + Mathf.RoundToInt(GamePreferences.Strength * 100) + "%", new Vector2(-60, 195), new Vector2(420, 40), 21);
+        var value = Label(card, Loc.F("Mức rung · {0}%", Mathf.RoundToInt(GamePreferences.Strength * 100)), new Vector2(-60, 195), new Vector2(420, 40), 21);
         var sliderRect = Rect("Vibration strength", card, new Vector2(-65, 140), new Vector2(400, 44));
         var slider = sliderRect.gameObject.AddComponent<Slider>();
         var track = Panel(sliderRect, Vector2.zero, new Vector2(400, 8), () => Color.Lerp(Surface, Accent, .25f));
@@ -657,16 +657,16 @@ public class CalmGameUI : MonoBehaviour
         Action refreshVibration = () =>
         {
             bool enabled = GamePreferences.Haptics;
-            vibrationLabel.text = "Rung toàn bộ game · " + (enabled ? "Bật" : "Tắt");
+            vibrationLabel.text = Loc.F("Rung toàn bộ game · {0}", Loc.T(enabled ? "Bật" : "Tắt"));
             switchTrack.color = enabled ? Accent : Color.Lerp(Surface, Ink, .25f);
             switchKnob.rectTransform.anchoredPosition = new Vector2(enabled ? 23 : -23, 0);
             slider.interactable = enabled;
             tryVibration.interactable = GameHaptics.Enabled;
-            value.text = "Mức rung · " + Mathf.RoundToInt(GamePreferences.Strength * 100) + "%";
-            vibrationHint.text = !enabled ? "Đã tắt rung cho mọi thao tác và màn chơi."
+            value.text = Loc.F("Mức rung · {0}%", Mathf.RoundToInt(GamePreferences.Strength * 100));
+            vibrationHint.text = Loc.T(!enabled ? "Đã tắt rung cho mọi thao tác và màn chơi."
                 : GamePreferences.Strength <= 0 ? "Mức rung đang ở 0%. Tăng mức để thử rung."
                 : Application.isMobilePlatform ? "Tự lưu cho toàn bộ game · Mức rung tùy thiết bị."
-                : "Tự lưu cho toàn bộ game · Thử rung trên điện thoại.";
+                : "Tự lưu cho toàn bộ game · Thử rung trên điện thoại.");
         };
         vibrationToggle.onValueChanged.AddListener(enabled =>
         {
@@ -677,7 +677,7 @@ public class CalmGameUI : MonoBehaviour
         slider.onValueChanged.AddListener(v => { GamePreferences.SetStrength(v); refreshVibration(); });
         refreshVibration();
         if (skin != null)
-            Label(card, "Phong cách " + StyleNames[activeStyle] + " dùng bộ màu riêng,\nkhông có bộ sưu tập hình nền.", new Vector2(0, -50), new Vector2(560, 70), 18);
+            Label(card, Loc.F("Phong cách {0} dùng bộ màu riêng,\nkhông có bộ sưu tập hình nền.", Loc.T(StyleNames[activeStyle])), new Vector2(0, -50), new Vector2(560, 70), 18);
         else
         {
             Label(card, "BỘ SƯU TẬP HÌNH NỀN", new Vector2(0, 20), new Vector2(560, 40), 18, FontStyle.Bold);
@@ -685,20 +685,32 @@ public class CalmGameUI : MonoBehaviour
             {
                 int theme = i;
                 int slot = i % perPage;
-                Button(card, (GamePreferences.Theme == i ? "● " : "○ ") + ThemeNames[i], new Vector2(slot % 2 == 0 ? -143 : 143, -35 - slot / 2 * 68), new Vector2(270, 56), () => { GamePreferences.SetTheme(theme); rebuild(); }, GamePreferences.Theme == i);
+                Button(card, (GamePreferences.Theme == i ? "● " : "○ ") + Loc.T(ThemeNames[i]), new Vector2(slot % 2 == 0 ? -143 : 143, -35 - slot / 2 * 68), new Vector2(270, 56), () => { GamePreferences.SetTheme(theme); rebuild(); }, GamePreferences.Theme == i);
             }
             var previous = Button(card, "← Trước", new Vector2(-205, -158), new Vector2(130, 40), () => { CloseModal(); OpenSettingsPage(page - 1); });
             previous.interactable = page > 0;
-            Label(card, (page + 1) + " / " + pageCount + " · " + ThemeNames.Length + " lựa chọn", new Vector2(0, -158), new Vector2(260, 36), 17);
+            Label(card, Loc.F("{0} / {1} · {2} lựa chọn", page + 1, pageCount, ThemeNames.Length), new Vector2(0, -158), new Vector2(260, 36), 17);
             var next = Button(card, "Sau →", new Vector2(205, -158), new Vector2(130, 40), () => { CloseModal(); OpenSettingsPage(page + 1); });
             next.interactable = page < pageCount - 1;
         }
-        Button(card, "Phong cách giao diện  ·  " + StyleNames[GamePreferences.Style] + "  ›", new Vector2(0, -235), new Vector2(550, 64), OpenStylePicker);
+        Button(card, Loc.F("Phong cách giao diện  ·  {0}  ›", Loc.T(StyleNames[GamePreferences.Style])), new Vector2(0, -235), new Vector2(550, 64), OpenStylePicker);
         if (LevelProgression.Current > 0 && GamePreferences.Style != activeStyle)
             Label(card, "Sẽ áp dụng khi chơi lại hoặc sang màn mới.", new Vector2(0, -283), new Vector2(560, 30), 16);
         ToggleRow(card, "Hiệu ứng chuyển động", new Vector2(0, -325), 64, GamePreferences.Effects, on => GamePreferences.SetEffects(on), rebuild);
-        Button(card, "Đặt lại hành trình…", new Vector2(0, -410), new Vector2(550, 62), ConfirmReset);
-        Button(card, "Xong", new Vector2(0, -495), new Vector2(550, 70), CloseModal, true);
+        for (int i = 0; i < Loc.LanguageNames.Length; i++)
+        {
+            int language = i;
+            Button(card, (GamePreferences.Language == i ? "● " : "○ ") + Loc.LanguageNames[i], new Vector2(i % 2 == 0 ? -143 : 143, -410), new Vector2(270, 56), () =>
+            {
+                if (GamePreferences.Language == language) return;
+                GamePreferences.SetLanguage(language);
+                CloseModal();
+                // Menus rebuild instantly; inside a level, reloading would restart it, so only the dialogs switch now.
+                if (LevelProgression.Current == 0) Rebuild(); else OpenSettingsPage(page);
+            }, GamePreferences.Language == i);
+        }
+        Button(card, "Đặt lại hành trình…", new Vector2(0, -495), new Vector2(550, 62), ConfirmReset);
+        Button(card, "Xong", new Vector2(0, -580), new Vector2(550, 70), CloseModal, true);
     }
     // Settings row with a pill switch (green when on).
     void ToggleRow(Transform parent, string title, Vector2 position, float height, bool value, Action<bool> set, Action rebuild)
@@ -717,7 +729,7 @@ public class CalmGameUI : MonoBehaviour
     void OpenStylePicker()
     {
         var card = Modal("Cửa hàng giao diện", "Mở khóa bằng xu kiếm từ màn chơi,\nnhiệm vụ và quà mỗi ngày.");
-        var balance = Label(card, "Xu của bạn: " + GameEconomy.Coins, new Vector2(0, 170), new Vector2(500, 36), 22, FontStyle.Bold);
+        var balance = Label(card, Loc.F("Xu của bạn: {0}", GameEconomy.Coins), new Vector2(0, 170), new Vector2(500, 36), 22, FontStyle.Bold);
         var hint = Label(card, LevelProgression.Current > 0 ? "Trong màn chơi: áp dụng khi chơi lại hoặc sang màn mới." : "Đổi xong, trang chủ sẽ tải lại ngay.", new Vector2(0, -205), new Vector2(580, 30), 16);
         string[] styleIcons = { "icon_galaxy", "icon_layers", "icon_candy", "icon_crystal", "icon_cat", "icon_cube", "icon_leaf" };
         for (int i = 0; i < StyleNames.Length; i++)
@@ -725,12 +737,12 @@ public class CalmGameUI : MonoBehaviour
             int style = i;
             var position = new Vector2(i % 2 == 0 ? -143 : 143, 110 - i / 2 * 78);
             bool owned = GameEconomy.StyleOwned(i);
-            string title = (GamePreferences.Style == i && !Lab ? "● " : "") + StyleNames[i] + (owned ? "" : "\n" + GameEconomy.StylePrice(i) + " xu");
+            string title = (GamePreferences.Style == i && !Lab ? "● " : "") + Loc.T(StyleNames[i]) + (owned ? "" : "\n" + Loc.F("{0} xu", GameEconomy.StylePrice(i)));
             var styleButton = Button(card, title, position, new Vector2(270, 68), () =>
             {
                 if (!GameEconomy.StyleOwned(style) && !GameEconomy.BuyStyle(style))
                 {
-                    hint.text = "Cần thêm " + (GameEconomy.StylePrice(style) - GameEconomy.Coins) + " xu. Thắng màn hoặc làm nhiệm vụ nhé!";
+                    hint.text = Loc.F("Cần thêm {0} xu. Thắng màn hoặc làm nhiệm vụ nhé!", GameEconomy.StylePrice(style) - GameEconomy.Coins);
                     return;
                 }
                 GamePreferences.SetStyle(style);
@@ -756,7 +768,7 @@ public class CalmGameUI : MonoBehaviour
         int pages = LevelProgression.TotalCount / perPage;
         if (page < 0) page = (LevelProgression.Saved - 1) / perPage;
         page = Mathf.Clamp(page, 0, pages - 1);
-        var card = Modal("Chọn màn", "Màn " + (page * perPage + 1) + " – " + (page + 1) * perPage + "   ·   " + GameEconomy.TotalStars() + " sao");
+        var card = Modal("Chọn màn", Loc.F("Màn {0} – {1}   ·   {2} sao", page * perPage + 1, (page + 1) * perPage, GameEconomy.TotalStars()));
         CloseButton(card, "Đóng", new Vector2(270, 315));
         for (int i = 0; i < perPage; i++)
         {
@@ -784,14 +796,14 @@ public class CalmGameUI : MonoBehaviour
             int quest = i;
             var row = Panel(card, new Vector2(0, 120 - i * 105), new Vector2(570, 92), () => Color.Lerp(Surface, skin != null ? skin.ink : Accent, .08f), true, false, "bar_light");
             Label(row.transform, GameEconomy.QuestNames[i], new Vector2(-115, 21), new Vector2(310, 36), 22, FontStyle.Bold);
-            Label(row.transform, GameEconomy.QuestProgress(i) + " / " + GameEconomy.QuestTargets[i] + "   ·   +" + GameEconomy.QuestRewards[i] + " xu",
+            Label(row.transform, Loc.F("{0} / {1}   ·   +{2} xu", GameEconomy.QuestProgress(i), GameEconomy.QuestTargets[i], GameEconomy.QuestRewards[i]),
                 new Vector2(-115, -17), new Vector2(310, 32), 18);
             bool claimed = GameEconomy.QuestClaimed(i), ready = GameEconomy.QuestComplete(i) && !claimed;
             var claim = Button(row.transform, claimed ? "Đã nhận" : ready ? "Nhận" : "Chưa xong", new Vector2(200, 0), new Vector2(150, 60),
                 () => { GameEconomy.ClaimQuest(quest); ShowQuests(); }, false, true, ready);
             claim.interactable = ready;
         }
-        Label(card, "Xu của bạn: " + GameEconomy.Coins, new Vector2(0, -200), new Vector2(500, 36), 20, FontStyle.Bold);
+        Label(card, Loc.F("Xu của bạn: {0}", GameEconomy.Coins), new Vector2(0, -200), new Vector2(500, 36), 20, FontStyle.Bold);
         Button(card, "Xong", new Vector2(0, -270), new Vector2(530, 70), CloseModal, true);
     }
     void ShowDaily()
@@ -806,17 +818,17 @@ public class CalmGameUI : MonoBehaviour
             var position = d < 4 ? new Vector2(-195 + d * 130, 105) : new Vector2(-130 + (d - 4) * 130, 5);
             var tile = Panel(card, position, new Vector2(120, 92), () => current ? Color.Lerp(Surface, Accent, .4f)
                 : Color.Lerp(Surface, skin != null ? skin.ink : Accent, done ? .2f : .07f), true, current, current ? "tile_yellow" : done ? "cell_green" : "cell_purple");
-            var dayLabel = Label(tile.transform, "Ngày " + (d + 1) + "\n" + (done ? "Đã nhận" : "+" + GameEconomy.DailyRewards[d]), new Vector2(0, Lab ? 3 : 0), new Vector2(112, 80), 19, FontStyle.Bold);
+            var dayLabel = Label(tile.transform, Loc.F("Ngày {0}", d + 1) + "\n" + (done ? Loc.T("Đã nhận") : "+" + GameEconomy.DailyRewards[d]), new Vector2(0, Lab ? 3 : 0), new Vector2(112, 80), 19, FontStyle.Bold);
             if (Lab)
             {
                 recolor.RemoveAt(recolor.Count - 1);
                 dayLabel.color = current ? skin.onPrimary : Color.white;
             }
         }
-        var claim = Button(card, available ? "Nhận +" + GameEconomy.DailyRewards[day] + " xu" : "Hẹn gặp lại ngày mai", new Vector2(0, -115), new Vector2(530, 84),
+        var claim = Button(card, available ? Loc.F("Nhận +{0} xu", GameEconomy.DailyRewards[day]) : "Hẹn gặp lại ngày mai", new Vector2(0, -115), new Vector2(530, 84),
             () => { GameEconomy.ClaimDaily(); ShowDaily(); }, false, true, available);
         claim.interactable = available;
-        Label(card, "Xu của bạn: " + GameEconomy.Coins, new Vector2(0, -190), new Vector2(500, 36), 20, FontStyle.Bold);
+        Label(card, Loc.F("Xu của bạn: {0}", GameEconomy.Coins), new Vector2(0, -190), new Vector2(500, 36), 20, FontStyle.Bold);
         Button(card, "Xong", new Vector2(0, -270), new Vector2(530, 70), CloseModal);
     }
     void ConfirmReset()
@@ -956,7 +968,7 @@ public class CalmGameUI : MonoBehaviour
     Text Label(Transform parent, string content, Vector2 position, Vector2 size, int fontSize, FontStyle style = FontStyle.Normal, bool onBackground = false)
     {
         var label = Rect("Label", parent, position, size).gameObject.AddComponent<Text>();
-        label.font = font; label.text = content; label.fontSize = fontSize;
+        label.font = font; label.text = Loc.T(content); label.fontSize = fontSize;
         label.fontStyle = style; label.alignment = TextAnchor.MiddleCenter;
         label.supportRichText = false; label.raycastTarget = false;
         Func<Color> ink = () => onBackground ? OnBg : Ink;
@@ -1082,12 +1094,12 @@ public class CalmGameUI : MonoBehaviour
     }
     static string ButtonIcon(string title)
     {
-        if (title.Contains("Âm thanh")) return GamePreferences.Sound ? "sound-on" : "sound-off";
-        if (title.Contains("Cài đặt")) return "settings";
-        if (title.Contains("Cách chơi") || title.Contains("Đã hiểu")) return "info";
-        if (title.Contains("trang chủ") || title.Contains("Trang chủ")) return "home";
-        if (title.Contains("Chơi lại") || title.Contains("Đặt lại")) return "restart";
-        if (title.Contains("Hoàn tác")) return "undo";
+        if (title.Contains("Âm thanh") || title.StartsWith("Sound")) return GamePreferences.Sound ? "sound-on" : "sound-off";
+        if (title.Contains("Cài đặt") || title.Contains("Settings")) return "settings";
+        if (title.Contains("Cách chơi") || title.Contains("Đã hiểu") || title.Contains("How to play") || title.Contains("Got it")) return "info";
+        if (title.Contains("trang chủ") || title.Contains("Trang chủ") || title.Contains("home") || title.Contains("Home")) return "home";
+        if (title.Contains("Chơi lại") || title.Contains("Đặt lại") || title.Contains("Restart") || title.Contains("Reset")) return "restart";
+        if (title.Contains("Hoàn tác") || title.Contains("Undo")) return "undo";
         return null;
     }
     static Color Hex(string value) { ColorUtility.TryParseHtmlString("#" + value, out var color); return color; }
